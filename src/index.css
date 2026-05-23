@@ -1,86 +1,98 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:is(.dark, .dark *));
-
 @theme {
   --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   --animate-glow: glow 2s infinite ease-in-out;
+  --font-display: var(--font-display);
+  --font-interface: var(--font-interface);
+  --font-data: var(--font-data);
+  --color-canvas: var(--color-canvas);
+  --color-surface: var(--color-surface);
+  --color-surface-2: var(--color-surface-2);
+  --color-border: var(--color-border);
+  --color-border-2: var(--color-border-2);
+  --color-ink-1: var(--color-ink-1);
+  --color-ink-2: var(--color-ink-2);
+  --color-ink-3: var(--color-ink-3);
+  --color-ink-4: var(--color-ink-4);
+  --color-accent: var(--color-accent);
+  --color-accent-2: var(--color-accent-2);
+  --color-accent-bg: var(--color-accent-bg);
+  --color-success: var(--color-success);
+  --color-success-bg: var(--color-success-bg);
+  --color-success-bd: var(--color-success-bd);
+  --color-warning: var(--color-warning);
+  --color-warning-bg: var(--color-warning-bg);
+  --color-warning-bd: var(--color-warning-bd);
+  --color-danger: var(--color-danger);
+  --color-danger-bg: var(--color-danger-bg);
+  --color-danger-bd: var(--color-danger-bd);
+}
+
+:root {
+  --font-display: 'Instrument Serif', 'Playfair Display', Georgia, serif;
+  --font-interface: 'DM Sans', 'Geist', 'Plus Jakarta Sans', sans-serif;
+  --font-data: 'DM Mono', 'Geist Mono', 'IBM Plex Mono', monospace;
+
+  --color-canvas: #FAFAF8;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #F5F4F0;
+  --color-border: #E8E6DF;
+  --color-border-2: #D4D1C8;
+
+  --color-ink-1: #1A1916;
+  --color-ink-2: #4A4843;
+  --color-ink-3: #8A8780;
+  --color-ink-4: #B8B5AC;
+
+  --color-accent: #1B3A6B;
+  --color-accent-2: #2D5299;
+  --color-accent-bg: #EBF0FA;
+
+  --color-success: #166534;
+  --color-success-bg: #F0FDF4;
+  --color-success-bd: #BBF7D0;
+  --color-warning: #92400E;
+  --color-warning-bg: #FFFBEB;
+  --color-warning-bd: #FDE68A;
+  --color-danger: #991B1B;
+  --color-danger-bg: #FFF5F5;
+  --color-danger-bd: #FECACA;
+  --color-neutral: #374151;
+  --color-neutral-bg: #F9FAFB;
 }
 
 @keyframes glow {
-  0%, 100% {
-    box-shadow: 0 0 5px rgba(16, 185, 129, 0.2), 0 0 10px rgba(16, 185, 129, 0.1);
-  }
-  50% {
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.3);
-  }
+  0%, 100% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.2), 0 0 10px rgba(16, 185, 129, 0.1); }
+  50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.3); }
 }
 
-/* Custom Scrollbar Styles */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #475569;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
-}
-
-/* Glassmorphism Styles */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(226, 232, 240, 0.85);
-}
-
-.dark .glass-panel {
-  background: rgba(15, 23, 42, 0.65) !important;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(51, 65, 85, 0.5) !important;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(226, 232, 240, 0.7);
-}
-
-.dark .glass-card {
-  background: rgba(30, 41, 59, 0.45) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(51, 65, 85, 0.3) !important;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-2);
 }
 
 body {
   margin: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: var(--font-interface);
+  background-color: var(--color-canvas);
+  color: var(--color-ink-1);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Smooth active states */
-.tab-transition {
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
+.font-display { font-family: var(--font-display); }
+.font-interface { font-family: var(--font-interface); }
+.font-data { font-family: var(--font-data); tabular-nums: true; }
+
+.tab-transition { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }

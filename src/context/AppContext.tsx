@@ -37,7 +37,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [view, setView] = useState<ViewState>('console');
   const [applicants, setApplicants] = useState<Applicant[]>(mockApplicants);
   const [activeApplicant, setActiveApplicant] = useState<Applicant | null>(null);
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [pipelineStage, setPipelineStage] = useState<PipelineStage>('idle');
   const [geminiStatus, setGeminiStatus] = useState<boolean>(false);
 
@@ -99,7 +99,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       // Create new applicant record
       const newApplicant: Applicant = {
-        id: `APP-00${applicants.length + 1}`,
+        id: `APP-${String(applicants.length + 1).padStart(3, '0')}`,
         name: data.name,
         cibil: data.cibil,
         income: data.income,
@@ -114,7 +114,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         redFlags: analysis.redFlags,
         analysisSummary: analysis.analysisSummary,
         transactions: data.transactions,
-        applicationDate: new Date().toISOString().split('T')[0]
+        applicationDate: new Date().toISOString().split('T')[0],
+        processingTime: `${(Math.random() * 2 + 2).toFixed(1)}s`
       };
 
       setApplicants(prev => [newApplicant, ...prev]);
