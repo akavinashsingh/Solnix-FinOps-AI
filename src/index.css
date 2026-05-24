@@ -3,6 +3,10 @@
 @theme {
   --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   --animate-glow: glow 2s infinite ease-in-out;
+  --animate-fade-in: fade-in 200ms ease-out;
+  --animate-slide-in: slide-in 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --animate-scale-up: scale-up 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --animate-shimmer: shimmer 1.6s linear infinite;
   --font-display: var(--font-display);
   --font-interface: var(--font-interface);
   --font-data: var(--font-data);
@@ -27,6 +31,9 @@
   --color-danger: var(--color-danger);
   --color-danger-bg: var(--color-danger-bg);
   --color-danger-bd: var(--color-danger-bd);
+  --color-aa-teal: var(--color-aa-teal);
+  --color-aa-teal-bg: var(--color-aa-teal-bg);
+  --color-aa-teal-bd: var(--color-aa-teal-bd);
 }
 
 :root {
@@ -60,39 +67,107 @@
   --color-danger-bd: #FECACA;
   --color-neutral: #374151;
   --color-neutral-bg: #F9FAFB;
+
+  /* OneMoney AA verified — teal accent */
+  --color-aa-teal: #0F766E;
+  --color-aa-teal-bg: #ECFDF5;
+  --color-aa-teal-bd: #99F6E4;
+
+  --shadow-sm: 0 1px 2px rgba(26, 25, 22, 0.06);
+  --shadow-md: 0 4px 12px rgba(26, 25, 22, 0.08), 0 1px 3px rgba(26, 25, 22, 0.04);
+  --shadow-lg: 0 12px 32px rgba(26, 25, 22, 0.10), 0 2px 6px rgba(26, 25, 22, 0.04);
+  --shadow-xl: 0 24px 48px rgba(26, 25, 22, 0.12), 0 4px 12px rgba(26, 25, 22, 0.06);
 }
 
 @keyframes glow {
   0%, 100% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.2), 0 0 10px rgba(16, 185, 129, 0.1); }
-  50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.3); }
+  50%      { box-shadow: 0 0 20px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.3); }
 }
 
-::-webkit-scrollbar { width: 6px; height: 6px; }
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slide-in {
+  from { transform: translateX(24px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes scale-up {
+  from { transform: scale(0.97); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+::-webkit-scrollbar       { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+::-webkit-scrollbar-thumb { background: #D4D1C8; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #B8B5AC; }
 
-.glass-panel {
-  background: var(--color-surface-2);
-  border: 1px solid var(--color-border);
-}
-
-.glass-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border-2);
-}
-
-body {
+html, body {
   margin: 0;
   font-family: var(--font-interface);
   background-color: var(--color-canvas);
   color: var(--color-ink-1);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'ss01', 'cv01';
 }
 
-.font-display { font-family: var(--font-display); }
+.font-display   { font-family: var(--font-display); letter-spacing: -0.01em; }
 .font-interface { font-family: var(--font-interface); }
-.font-data { font-family: var(--font-data); tabular-nums: true; }
+.font-data      { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
 
-.tab-transition { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+.tracking-label { letter-spacing: 0.08em; }
+.tracking-tight-data { letter-spacing: -0.02em; }
+.tabular         { font-variant-numeric: tabular-nums; }
+
+.tab-transition { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+
+.glass-panel { background: var(--color-surface); border: 1px solid var(--color-border); }
+.glass-card  { background: var(--color-surface); border: 1px solid var(--color-border-2); }
+
+.shadow-warm-sm { box-shadow: var(--shadow-sm); }
+.shadow-warm-md { box-shadow: var(--shadow-md); }
+.shadow-warm-lg { box-shadow: var(--shadow-lg); }
+.shadow-warm-xl { box-shadow: var(--shadow-xl); }
+
+/* Subtle striped table rows */
+tbody tr.row-stripe:nth-child(even) {
+  background-color: color-mix(in srgb, var(--color-surface-2) 60%, transparent);
+}
+
+/* Skeleton shimmer for loading states */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-2) 0%,
+    color-mix(in srgb, var(--color-border) 50%, var(--color-surface)) 50%,
+    var(--color-surface-2) 100%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+
+/* Tabular hover transition for table rows */
+.row-hover { transition: background-color 100ms ease-out; }
+.row-hover:hover { background-color: var(--color-surface-2); }
+
+/* Focus ring */
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 25%, transparent);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
