@@ -1,9 +1,26 @@
 # Solnix FinOps AI — Design System & Redesign Document
 
-**Version:** 1.1
+**Version:** 1.2
 **Author:** Intern Design Brief
-**Status:** Phases 0–5 shipped (see "Implementation status" below)
+**Status:** Phases 0–5 shipped + dark-mode default + responsive nav (see "Implementation status" below)
 **Target:** Production-grade dashboard for Bank/NBFC executive demo
+
+---
+
+## Divergences from the original brief (read first)
+
+The shipped implementation matches phases 0-5 in *structure* — spacing, radii, type hierarchy, weighted KPI cards, 6-step pipeline animation, anomaly explainer, slide-in detail panel, audit trails — but **deliberately diverges from the original colour and typography direction** in two ways. Both changes were made intentionally after seeing the brief executed:
+
+| Decision in brief                          | Shipped instead                                                                                                                  |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| Light mode only · "warm canvas" background | **Dark mode as default**, light mode opt-in via `.light` class on `<html>`. Theme switcher in the header (Sun/Moon) persists to `localStorage`. The light palette still matches the brief exactly. |
+| Instrument Serif + DM Sans                 | **Outfit (display) + Plus Jakarta Sans (interface)** + DM Mono (data, unchanged). Outfit has the same editorial gravitas as Instrument Serif at headline sizes but reads better at small numeric sizes; Plus Jakarta Sans has tighter letterforms than DM Sans which works better on dark backgrounds. |
+| Generic accent indigo discouraged          | **Indigo `#6366F1`** is the dark-mode accent (it pops against `#050508` in a way navy can't). Navy `#1B3A6B` is retained for light mode. |
+| OneMoney teal `#0F766E`                    | **Neon teal `#00F5D4`** for dark mode "live" / "verified" signals (it reads as a status colour, not a brand colour). Original teal retained for light mode. |
+| Drop shadows only                          | Added **glow shadows** (`.shadow-glow-success`, `.shadow-glow-warning`, `.shadow-glow-accent`) for dark-mode active surfaces. Flattened to neutral shadow in light mode. |
+| Tab nav across the top                     | **Left sidebar** with grouped sections — necessary once the view count grew past three. Hamburger-triggered overlay below the `lg` breakpoint. |
+
+All other guidance from the original brief — spacing scale, border radii, no-pill buttons, bordered semantic badges, font-data for IDs/amounts, tight letter-spacing on large numbers — is honoured exactly.
 
 ---
 

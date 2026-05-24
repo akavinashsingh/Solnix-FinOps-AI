@@ -38,6 +38,12 @@ No test runner is configured yet. Recommended next step: **Vitest + React Testin
 
 All design tokens (typography, palette, spacing, radii, shadows, keyframes) live in [`src/index.css`](src/index.css) under `:root {}` and are exposed to Tailwind via `@theme`. The full system + rationale is in [`docs/agents/design.md`](docs/agents/design.md). When styling new UI, draw from these tokens — do not introduce new colours or arbitrary pixel values.
 
+**Theming:** dark mode is the default. Light mode is opted in by adding the `.light` class to `<html>` — see the theme switcher in [`src/App.tsx`](src/App.tsx) (Sun/Moon icon in the top header, persists to `localStorage` under `solnix-theme`). When writing components, rely on the semantic tokens (`text-ink-1`, `bg-surface`, `border-border`, `text-accent`, etc.) rather than hard-coding hex values — the same component will render correctly in both modes.
+
+**Glass + glow effects** (`.glass-panel`, `.shadow-glow-success`, `.shadow-glow-accent`) are dark-mode only; they are flattened to plain surfaces under `.light` to keep the warm-paper aesthetic readable. Same with backdrop-blur.
+
+**A11y baseline:** use `focus-ring` on every interactive surface, give every icon-only button an `aria-label`, and respect `prefers-reduced-motion` (already handled globally in `index.css`).
+
 ## Mock data
 
 - [`src/data/types.ts`](src/data/types.ts) — domain types (Applicant, Loan, Reviewer, Policy, Consent, Nudge, Audit).

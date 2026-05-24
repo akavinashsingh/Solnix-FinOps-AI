@@ -148,7 +148,7 @@ export const HITLView: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
 
           {/* Queue */}
-          <aside className="md:col-span-4 bg-surface border border-border rounded-xl shadow-warm-sm overflow-hidden flex flex-col">
+          <aside className="md:col-span-4 glass-card rounded-xl shadow-warm-md overflow-hidden flex flex-col hover:border-warning-bd/20 transition-all duration-300">
             <div className="p-4 border-b border-border flex items-center justify-between">
               <h3 className="text-[10px] font-data uppercase tracking-label text-ink-3 m-0">Flagged queue</h3>
               <span className="text-[10px] font-data tabular text-ink-3">{flagged.length} pending</span>
@@ -198,17 +198,17 @@ export const HITLView: React.FC = () => {
 
           {/* Detail */}
           {activeApp && (
-            <section className="md:col-span-8 bg-surface border border-border rounded-xl shadow-warm-sm flex flex-col overflow-hidden">
+            <section className="md:col-span-8 glass-panel rounded-xl shadow-warm-lg flex flex-col overflow-hidden">
 
               {/* Header */}
-              <div className="border-b border-border p-5 flex items-start justify-between gap-4">
+              <div className="border-b border-border p-5 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div className="flex flex-col gap-0.5">
                   <span className="font-data text-[11px] text-accent tabular tracking-tight-data">{activeApp.id}</span>
                   <h3 className="font-display text-[22px] text-ink-1 m-0 leading-none">{activeApp.name}</h3>
                   <span className="text-[11px] text-ink-3">{activeApp.employer ?? '—'} {activeApp.loanPurpose ? `· ${activeApp.loanPurpose}` : ''}</span>
                 </div>
-                <div className="flex flex-col gap-1.5 items-end">
-                  <span className="inline-flex items-center gap-1.5 text-[10px] font-data uppercase tracking-label text-warning bg-warning-bg border border-warning-bd rounded-sm px-2 py-0.5">
+                <div className="flex flex-col gap-1.5 sm:items-end">
+                  <span className="inline-flex items-center gap-1.5 text-[10px] font-data uppercase tracking-label text-warning bg-warning-bg border border-warning-bd rounded-sm px-2 py-0.5 w-fit">
                     <AlertTriangle size={11} /> HITL Flagged
                   </span>
                   <SLATimer flaggedAt={activeApp.flaggedAt} slaMinutes={activePolicy.hitlSlaMinutes} />
@@ -502,7 +502,8 @@ const RedFlag: React.FC<{ flag: string; explanation: { title: string; detail: st
     <div className="border border-danger-bd rounded-md bg-danger-bg overflow-hidden">
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full p-2.5 flex items-center gap-2 text-left text-[12px] text-danger cursor-pointer"
+        aria-expanded={open}
+        className="w-full p-2.5 flex items-center gap-2 text-left text-[12px] text-danger cursor-pointer focus-ring"
       >
         <AlertCircle size={12} className="shrink-0" />
         <span className="flex-1">{flag}</span>
@@ -510,18 +511,20 @@ const RedFlag: React.FC<{ flag: string; explanation: { title: string; detail: st
           <Info size={10} /> {open ? 'hide' : 'explain'}
         </span>
       </button>
-      {open && (
-        <div className="px-3 pb-3 pt-1 border-t border-danger-bd/60 text-[12px] text-ink-1 leading-relaxed flex flex-col gap-2 bg-surface">
-          <div>
-            <p className="text-[10px] font-data uppercase tracking-label text-ink-3 m-0 mb-0.5">{explanation.title}</p>
-            <p className="m-0">{explanation.detail}</p>
-          </div>
-          <div className="border-l-2 border-accent pl-3">
-            <p className="text-[10px] font-data uppercase tracking-label text-ink-3 m-0 mb-0.5">What a reviewer should check</p>
-            <p className="m-0 text-ink-2">{explanation.suggestion}</p>
+      <div className={['disclosure-content', open ? 'open' : ''].join(' ')}>
+        <div>
+          <div className="px-3 pb-3 pt-1 border-t border-danger-bd/60 text-[12px] text-ink-1 leading-relaxed flex flex-col gap-2 bg-surface">
+            <div>
+              <p className="text-[10px] font-data uppercase tracking-label text-ink-3 m-0 mb-0.5">{explanation.title}</p>
+              <p className="m-0">{explanation.detail}</p>
+            </div>
+            <div className="border-l-2 border-accent pl-3">
+              <p className="text-[10px] font-data uppercase tracking-label text-ink-3 m-0 mb-0.5">What a reviewer should check</p>
+              <p className="m-0 text-ink-2">{explanation.suggestion}</p>
+            </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
@@ -541,23 +544,70 @@ const OverrideModal: React.FC<{
   }[action];
 
   const valid = comment.trim().length >= 8;
+  const modalRef = React.useRef<HTMLDivElement>(null);
+
+  // Auto focus dialog first input/textarea on open
+  useEffect(() => {
+    const focusable = modalRef.current?.querySelectorAll('textarea, button');
+    if (focusable && focusable.length > 0) {
+      (focusable[0] as HTMLElement).focus();
+    }
+  }, []);
+
+  // Trap focus inside modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onCancel();
+      }
+      if (e.key === 'Tab' && modalRef.current) {
+        const focusable = modalRef.current.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex="0"]'
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0] as HTMLElement;
+        const last = focusable[focusable.length - 1] as HTMLElement;
+
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            last.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === last) {
+            first.focus();
+            e.preventDefault();
+          }
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onCancel]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4 animate-fade-in">
       <div className="absolute inset-0 bg-ink-1/30 backdrop-blur-[2px]" onClick={onCancel} />
-      <div className="relative w-full max-w-md bg-surface border border-border rounded-lg shadow-warm-xl p-6 flex flex-col gap-4 animate-scale-up">
+      <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+        className="relative w-full max-w-md bg-surface border border-border rounded-lg shadow-warm-xl p-6 flex flex-col gap-4 animate-scale-up"
+      >
         <div className="flex flex-col gap-1">
           <span className="text-[10px] font-data uppercase tracking-label text-ink-3">{applicant.id} · {applicant.name}</span>
-          <h3 className="font-display text-[20px] m-0 text-ink-1">{config.label}</h3>
+          <h3 id="modal-title" className="font-display text-[20px] m-0 text-ink-1">{config.label}</h3>
         </div>
 
         <p className="text-[12px] text-ink-2 leading-relaxed m-0">{config.description}</p>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-[10px] font-data uppercase tracking-label text-ink-3">
+          <label htmlFor="override-justification" className="text-[10px] font-data uppercase tracking-label text-ink-3">
             Reviewer justification <span className="text-danger">*</span> (min 8 chars · stored in audit log)
           </label>
           <textarea
+            id="override-justification"
             value={comment}
             onChange={e => setComment(e.target.value)}
             rows={4}

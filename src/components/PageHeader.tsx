@@ -5,7 +5,7 @@ export const PageHeader: React.FC<{
   subtitle?: string;
   right?: React.ReactNode;
 }> = ({ title, subtitle, right }) => (
-  <div className="flex items-end justify-between gap-4">
+  <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
     <div>
       <h1 className="font-display text-[28px] leading-tight m-0 text-ink-1">{title}</h1>
       {subtitle && <p className="text-[13px] text-ink-3 mt-1">{subtitle}</p>}

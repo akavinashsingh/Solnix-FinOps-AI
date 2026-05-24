@@ -167,11 +167,19 @@ const IdleStage: React.FC<{
     { date: new Date().toISOString().split('T')[0], description: 'NEW TRANSACTION', amount: 0, type: 'credit' },
   ]);
 
+  const nameErr = !p.name.trim();
+  const cibilErr = p.cibil < 300 || p.cibil > 900;
+  const incomeErr = p.income <= 0;
+  const debtErr = p.existingDebt < 0;
+  const amountErr = p.requestedAmount <= 0;
+  const tenureErr = p.tenureMonths < 1 || p.tenureMonths > 120;
+  const hasErr = nameErr || cibilErr || incomeErr || debtErr || amountErr || tenureErr;
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
 
       {/* Presets sidebar */}
-      <aside className="md:col-span-4 bg-surface border border-border rounded-xl p-5 flex flex-col gap-3 shadow-warm-sm">
+      <aside className="md:col-span-4 glass-card rounded-xl p-5 flex flex-col gap-3 shadow-warm-sm">
         <div>
           <h3 className="text-[10px] font-data uppercase tracking-label text-ink-3 m-0">Applicant Presets</h3>
           <p className="text-[12px] text-ink-3 mt-1">Load a profile that exercises a specific underwriting outcome.</p>
@@ -230,7 +238,7 @@ const IdleStage: React.FC<{
       </aside>
 
       {/* Form */}
-      <section className="md:col-span-8 bg-surface border border-border rounded-xl p-6 shadow-warm-sm flex flex-col gap-5">
+      <section className="md:col-span-8 glass-panel rounded-xl p-6 shadow-warm-lg flex flex-col gap-5">
         <div className="flex items-center justify-between">
           <h3 className="text-[10px] font-data uppercase tracking-label text-ink-3 m-0">Configure Application</h3>
           <span className="text-[11px] font-data tabular text-ink-3">Est. monthly EMI · <span className="text-ink-1">{formatINR(p.monthlyEmi)}</span></span>
@@ -243,14 +251,18 @@ const IdleStage: React.FC<{
           if (d.existingDebt) p.setExistingDebt(d.existingDebt);
         }} />
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Applicant Name" full>
             <input
               type="text"
+              autocomplete="name"
               value={p.name}
               onChange={e => p.setName(e.target.value)}
-              className="form-input"
+              className={["form-input", nameErr ? "border-danger focus:border-danger" : ""].join(' ')}
+              aria-invalid={nameErr}
+              aria-describedby={nameErr ? "name-error" : undefined}
             />
+            {nameErr && <span id="name-error" className="text-[11px] text-danger mt-1">Name is required</span>}
           </Field>
 
           <Field label="CIBIL Bureau Score">
@@ -258,8 +270,11 @@ const IdleStage: React.FC<{
               type="number" min={300} max={900}
               value={p.cibil}
               onChange={e => p.setCibil(Number(e.target.value))}
-              className="form-input font-data tabular"
+              className={["form-input font-data tabular", cibilErr ? "border-danger focus:border-danger" : ""].join(' ')}
+              aria-invalid={cibilErr}
+              aria-describedby={cibilErr ? "cibil-error" : undefined}
             />
+            {cibilErr && <span id="cibil-error" className="text-[11px] text-danger mt-1">Must be between 300 and 900</span>}
           </Field>
 
           <Field label="Avg Monthly Income (₹)">
@@ -267,8 +282,11 @@ const IdleStage: React.FC<{
               type="number"
               value={p.income}
               onChange={e => p.setIncome(Number(e.target.value))}
-              className="form-input font-data tabular"
+              className={["form-input font-data tabular", incomeErr ? "border-danger focus:border-danger" : ""].join(' ')}
+              aria-invalid={incomeErr}
+              aria-describedby={incomeErr ? "income-error" : undefined}
             />
+            {incomeErr && <span id="income-error" className="text-[11px] text-danger mt-1">Income must be greater than ₹0</span>}
           </Field>
 
           <Field label="Existing Monthly EMIs (₹)">
@@ -276,8 +294,11 @@ const IdleStage: React.FC<{
               type="number"
               value={p.existingDebt}
               onChange={e => p.setExistingDebt(Number(e.target.value))}
-              className="form-input font-data tabular"
+              className={["form-input font-data tabular", debtErr ? "border-danger focus:border-danger" : ""].join(' ')}
+              aria-invalid={debtErr}
+              aria-describedby={debtErr ? "debt-error" : undefined}
             />
+            {debtErr && <span id="debt-error" className="text-[11px] text-danger mt-1">Debt cannot be negative</span>}
           </Field>
 
           <Field label="Requested Amount (₹)">
@@ -285,8 +306,11 @@ const IdleStage: React.FC<{
               type="number"
               value={p.requestedAmount}
               onChange={e => p.setRequestedAmount(Number(e.target.value))}
-              className="form-input font-data tabular"
+              className={["form-input font-data tabular", amountErr ? "border-danger focus:border-danger" : ""].join(' ')}
+              aria-invalid={amountErr}
+              aria-describedby={amountErr ? "amount-error" : undefined}
             />
+            {amountErr && <span id="amount-error" className="text-[11px] text-danger mt-1">Amount must be greater than ₹0</span>}
           </Field>
 
           <Field label="Tenure (months)">
@@ -294,8 +318,11 @@ const IdleStage: React.FC<{
               type="number" min={1} max={120}
               value={p.tenureMonths}
               onChange={e => p.setTenureMonths(Number(e.target.value))}
-              className="form-input font-data tabular"
+              className={["form-input font-data tabular", tenureErr ? "border-danger focus:border-danger" : ""].join(' ')}
+              aria-invalid={tenureErr}
+              aria-describedby={tenureErr ? "tenure-error" : undefined}
             />
+            {tenureErr && <span id="tenure-error" className="text-[11px] text-danger mt-1">Must be between 1 and 120 months</span>}
           </Field>
 
           <Field label="Borrowing Category" full>
@@ -344,8 +371,8 @@ const IdleStage: React.FC<{
             </button>
           </div>
 
-          <div className="border border-border rounded-md overflow-hidden">
-            <table className="w-full text-[12px] border-collapse">
+          <div className="border border-border rounded-md overflow-hidden overflow-x-auto">
+            <table className="w-full text-[12px] border-collapse min-w-[500px]">
               <thead>
                 <tr className="bg-surface-2 border-b border-border text-[10px] font-data uppercase tracking-label text-ink-3">
                   <th className="py-2 px-3 font-medium text-left">Date</th>
@@ -411,7 +438,7 @@ const IdleStage: React.FC<{
 
         <button
           onClick={p.onStart}
-          disabled={!p.name.trim() || p.transactions.length === 0}
+          disabled={hasErr || p.transactions.length === 0}
           className="mt-2 h-11 w-full rounded-md bg-accent hover:bg-accent-2 text-surface text-[14px] font-medium flex items-center justify-center gap-2 transition-colors shadow-warm-sm focus-ring cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Initiate Autonomous Underwriting <ArrowRight size={15} />
@@ -424,17 +451,17 @@ const IdleStage: React.FC<{
           width: 100%;
           height: 38px;
           padding: 0 12px;
-          background: var(--color-surface-2);
-          border: 1px solid var(--color-border);
+          background: rgba(18, 20, 29, 0.7);
+          border: 1px solid var(--color-border-2);
           border-radius: 6px;
           color: var(--color-ink-1);
           font-size: 13px;
-          transition: border-color 100ms, box-shadow 100ms;
+          transition: border-color 150ms ease-out, box-shadow 150ms ease-out;
         }
         .form-input:focus-visible {
           outline: none;
           border-color: var(--color-accent);
-          box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 22%, transparent);
+          box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25), 0 0 8px rgba(99, 102, 241, 0.15);
         }
       `}</style>
     </div>
@@ -551,8 +578,16 @@ const DocumentDropZone: React.FC<{ onExtracted: (fields: ExtractedFields) => voi
         const f = e.dataTransfer.files?.[0];
         if (f) handleFile(f);
       }}
+      tabIndex={0}
+      onKeyDown={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          document.getElementById('dropzone-file-input')?.click();
+        }
+      }}
+      aria-label="Drop statement file zone. Press Enter or Space to open file browser."
       className={[
-        'border-2 border-dashed rounded-md p-4 flex items-center gap-3 transition-colors',
+        'border-2 border-dashed rounded-md p-4 flex items-center gap-3 transition-colors focus-ring',
         dragOver ? 'border-accent bg-accent-bg' : 'border-border bg-surface-2',
       ].join(' ')}
     >
@@ -563,7 +598,7 @@ const DocumentDropZone: React.FC<{ onExtracted: (fields: ExtractedFields) => voi
         <div className="text-[12px] text-ink-1 font-medium">
           {extracting
             ? `Extracting from ${file?.name ?? 'document'}…`
-            : 'Drop a salary slip, bank statement, or PAN here'}
+            : 'Drop statement files here or press Enter to browse'}
         </div>
         <div className="text-[11px] text-ink-3 mt-0.5 truncate">
           {extracting
@@ -575,6 +610,7 @@ const DocumentDropZone: React.FC<{ onExtracted: (fields: ExtractedFields) => voi
         <label className="h-9 px-3 rounded-md bg-accent text-surface text-[12px] font-medium hover:bg-accent-2 cursor-pointer flex items-center gap-1.5">
           <FileText size={13} /> Browse
           <input
+            id="dropzone-file-input"
             type="file"
             accept=".pdf,.jpg,.jpeg,.png"
             className="hidden"
@@ -661,6 +697,13 @@ const ProcessingStage: React.FC<{
 }> = ({ currentStepIndex, stepElapsed, elapsedMs, applicantName }) => (
   <div className="flex justify-center items-start py-6">
     <div className="w-full max-w-lg bg-surface border border-border rounded-xl shadow-warm-lg p-6 flex flex-col gap-5 animate-scale-up">
+
+      {/* Hidden screen-reader announcer for pipeline step updates */}
+      <div className="sr-only" aria-live="polite">
+        {currentStepIndex >= 0 && currentStepIndex < PIPELINE_STEPS.length
+          ? `Current step: ${PIPELINE_STEPS[currentStepIndex].label} is executing.`
+          : 'Pipeline is preparing to run.'}
+      </div>
 
       {/* Header */}
       <div className="flex items-center justify-between">

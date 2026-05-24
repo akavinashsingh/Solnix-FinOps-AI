@@ -115,23 +115,23 @@ export const ConsoleView: React.FC = () => {
     <div className="flex-1 flex flex-col gap-6 max-w-7xl mx-auto w-full">
 
       {/* Page header */}
-      <div className="flex items-end justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <h1 className="font-display text-[28px] leading-tight m-0 text-ink-1">Operations Console</h1>
           <p className="text-[13px] text-ink-3 mt-1">Live underwriting pipeline · {totalCount} applications across the past 9 days.</p>
         </div>
         <button
           onClick={() => setView('pipeline')}
-          className="h-9 px-3.5 bg-accent hover:bg-accent-2 text-surface rounded-md text-[13px] font-medium flex items-center gap-1.5 transition-all shadow-warm-sm focus-ring cursor-pointer"
+          className="h-9 px-3.5 bg-accent hover:bg-accent-2 text-surface rounded-md text-[13px] font-medium flex items-center justify-center gap-1.5 transition-all shadow-warm-sm focus-ring cursor-pointer sm:w-auto w-full"
         >
           <Plus size={15} /> Process New Loan
         </button>
       </div>
 
       {/* Weighted stat cards: Total | Approved (wide) | HITL (highlighted) | Denied */}
-      <div className="grid grid-cols-2 md:grid-cols-12 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4">
 
-        <div className="md:col-span-3 bg-surface border border-border rounded-xl p-6 h-[112px] flex flex-col justify-between shadow-warm-sm">
+        <div className="sm:col-span-1 lg:col-span-3 glass-card rounded-xl p-6 h-[112px] flex flex-col justify-between hover:shadow-glow-accent hover:border-accent/40 transition-all duration-300">
           <span className="text-[10px] font-data uppercase tracking-label text-ink-3">Total Applications</span>
           <div className="flex items-end justify-between">
             <span className="font-display text-[32px] text-ink-1 leading-none tracking-tight-data tabular">{totalCount}</span>
@@ -139,7 +139,7 @@ export const ConsoleView: React.FC = () => {
           </div>
         </div>
 
-        <div className="md:col-span-4 bg-surface border border-border rounded-xl p-6 h-[112px] flex flex-col justify-between shadow-warm-sm">
+        <div className="sm:col-span-1 lg:col-span-4 glass-card rounded-xl p-6 h-[112px] flex flex-col justify-between hover:shadow-glow-success hover:border-success/40 transition-all duration-300">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-data uppercase tracking-label text-ink-3">Approved Portfolio</span>
             <Sparkline color="var(--color-success)" />
@@ -154,7 +154,7 @@ export const ConsoleView: React.FC = () => {
 
         <button
           onClick={() => setView('hitl')}
-          className="md:col-span-3 bg-warning-bg border border-warning-bd rounded-xl p-6 h-[112px] flex flex-col justify-between shadow-warm-sm text-left hover:brightness-[0.99] transition-all focus-ring cursor-pointer"
+          className="sm:col-span-1 lg:col-span-3 bg-warning-bg border border-warning-bd rounded-xl p-6 h-[112px] flex flex-col justify-between shadow-glow-warning hover:border-warning/60 text-left transition-all duration-300 focus-ring cursor-pointer"
         >
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-data uppercase tracking-label text-warning">HITL Exceptions</span>
@@ -168,7 +168,7 @@ export const ConsoleView: React.FC = () => {
           </div>
         </button>
 
-        <div className="md:col-span-2 bg-surface border border-border rounded-xl p-6 h-[112px] flex flex-col justify-between shadow-warm-sm">
+        <div className="sm:col-span-1 lg:col-span-2 glass-card rounded-xl p-6 h-[112px] flex flex-col justify-between hover:shadow-glow-warning hover:border-danger/40 transition-all duration-300">
           <span className="text-[10px] font-data uppercase tracking-label text-ink-3">Rejected</span>
           <div className="flex items-end justify-between">
             <span className="font-display text-[32px] text-ink-1 leading-none tracking-tight-data tabular">{deniedCount}</span>
@@ -178,7 +178,7 @@ export const ConsoleView: React.FC = () => {
       </div>
 
       {/* Table card */}
-      <div className="bg-surface border border-border rounded-xl shadow-warm-sm flex flex-col flex-1 overflow-hidden">
+      <div className="glass-panel rounded-xl shadow-warm-lg flex flex-col flex-1 overflow-hidden">
 
         {/* Toolbar */}
         <div className="p-4 border-b border-border flex flex-col sm:flex-row gap-3 items-center justify-between">
@@ -187,13 +187,19 @@ export const ConsoleView: React.FC = () => {
             <span className="text-[11px] font-data tracking-label uppercase text-ink-3">· {filtered.length} of {totalCount}</span>
           </div>
 
-          <div className="flex gap-2 items-center w-full sm:w-auto">
-            <div className="flex border border-border rounded-md overflow-hidden text-[11px] font-data uppercase tracking-label">
+          <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center w-full sm:w-auto">
+            <div
+              role="tablist"
+              aria-label="Filter applicants by status"
+              className="flex border border-border rounded-md overflow-hidden text-[11px] font-data uppercase tracking-label divide-x divide-border w-full sm:w-auto"
+            >
               {(['ALL', 'APPROVED', 'FLAGGED', 'DENIED'] as const).map(s => (
                 <button
                   key={s}
+                  role="tab"
+                  aria-selected={statusFilter === s}
                   onClick={() => setStatusFilter(s)}
-                  className={`px-2.5 py-1.5 cursor-pointer transition-colors ${statusFilter === s ? 'bg-ink-1 text-surface' : 'bg-surface text-ink-3 hover:text-ink-1'}`}
+                  className={`flex-1 px-2.5 py-1.5 cursor-pointer transition-colors focus-ring text-center ${statusFilter === s ? 'bg-ink-1 text-surface' : 'bg-surface text-ink-3 hover:text-ink-1'}`}
                 >
                   {s === 'ALL' ? 'All' : s.charAt(0) + s.slice(1).toLowerCase()}
                 </button>
@@ -203,6 +209,8 @@ export const ConsoleView: React.FC = () => {
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-3" size={14} />
               <input
                 type="text"
+                id="loan-book-search"
+                aria-label="Search applicants or ID"
                 placeholder="Search applicant or ID…"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -233,7 +241,14 @@ export const ConsoleView: React.FC = () => {
                 <tr
                   key={app.id}
                   onClick={() => setActiveApplicant(app)}
-                  className="row-stripe row-hover border-b border-border last:border-b-0 cursor-pointer h-[44px]"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setActiveApplicant(app);
+                    }
+                  }}
+                  className="row-stripe row-hover border-b border-border last:border-b-0 cursor-pointer h-[44px] focus-ring focus:outline-none"
                 >
                   <td className="py-0 px-4 font-data text-[12px] text-accent">{app.id}</td>
                   <td className="py-0 px-4">
@@ -302,22 +317,59 @@ const ApplicantDetail: React.FC<{
   const [confirmingDisburse, setConfirmingDisburse] = useState(false);
   const [disbursed, setDisbursed] = useState(false);
 
+  const panelRef = React.useRef<HTMLDivElement>(null);
+  const closeBtnRef = React.useRef<HTMLButtonElement>(null);
+
   const dti = Math.round(((app.existingDebt + (app.requestedAmount / app.tenureMonths)) / app.income) * 100);
   const monthlyEmi = Math.round(app.requestedAmount / app.tenureMonths);
 
+  // Auto focus Close button on open
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    if (closeBtnRef.current) {
+      closeBtnRef.current.focus();
+    }
+  }, []);
+
+  // Trap focus inside drawer
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+      if (e.key === 'Tab' && panelRef.current) {
+        const focusable = panelRef.current.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex="0"]'
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0] as HTMLElement;
+        const last = focusable[focusable.length - 1] as HTMLElement;
+
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            last.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === last) {
+            first.focus();
+            e.preventDefault();
+          }
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end animate-fade-in">
       <div className="absolute inset-0 bg-ink-1/30 backdrop-blur-[2px]" onClick={onClose} />
       <aside
+        ref={panelRef}
         className="relative w-full max-w-[480px] bg-surface h-full flex flex-col border-l border-border shadow-warm-xl animate-slide-in"
         role="dialog"
         aria-modal="true"
+        aria-label="Applicant Detail Panel"
       >
         {/* Sticky header */}
         <div className="sticky top-0 bg-surface border-b border-border h-[72px] flex items-center justify-between px-6 z-10">
@@ -335,6 +387,7 @@ const ApplicantDetail: React.FC<{
               <Clock size={11} /> {app.processingTime}
             </span>
             <button
+              ref={closeBtnRef}
               onClick={onClose}
               aria-label="Close"
               className="w-8 h-8 rounded-md hover:bg-surface-2 text-ink-3 flex items-center justify-center cursor-pointer focus-ring"
@@ -516,20 +569,22 @@ const ApplicantDetail: React.FC<{
               </>
             )
           ) : app.status === 'FLAGGED' ? (
-            <>
-              <button
-                onClick={onDeny}
-                className="flex-1 h-9 rounded-md border border-danger-bd text-danger text-[12px] font-medium hover:bg-danger-bg cursor-pointer"
-              >Reject</button>
-              <button
-                onClick={onRequestDocs}
-                className="flex-1 h-9 rounded-md border border-border text-ink-2 text-[12px] font-medium hover:bg-surface-2 cursor-pointer"
-              >Request Docs</button>
+            <div className="flex flex-col sm:flex-row gap-2 w-full">
+              <div className="flex gap-2 w-full">
+                <button
+                  onClick={onDeny}
+                  className="flex-1 h-9 rounded-md border border-danger-bd text-danger text-[12px] font-medium hover:bg-danger-bg cursor-pointer text-center"
+                >Reject</button>
+                <button
+                  onClick={onRequestDocs}
+                  className="flex-1 h-9 rounded-md border border-border text-ink-2 text-[12px] font-medium hover:bg-surface-2 cursor-pointer text-center"
+                >Request Docs</button>
+              </div>
               <button
                 onClick={onApprove}
-                className="flex-1 h-9 rounded-md bg-accent text-surface text-[12px] font-medium hover:bg-accent-2 cursor-pointer focus-ring"
+                className="w-full sm:flex-1 h-9 rounded-md bg-accent text-surface text-[12px] font-medium hover:bg-accent-2 cursor-pointer focus-ring text-center"
               >Override Approve</button>
-            </>
+            </div>
           ) : (
             <>
               <button
@@ -607,7 +662,8 @@ const RedFlagExplain: React.FC<{ flag: string }> = ({ flag }) => {
     <div className="border border-danger-bd rounded-md bg-danger-bg overflow-hidden">
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full p-2.5 flex items-center gap-2 text-left text-[12px] text-danger cursor-pointer"
+        aria-expanded={open}
+        className="w-full p-2.5 flex items-center gap-2 text-left text-[12px] text-danger cursor-pointer focus-ring"
       >
         <AlertCircle size={12} className="shrink-0" />
         <span className="flex-1">{flag}</span>
@@ -615,18 +671,20 @@ const RedFlagExplain: React.FC<{ flag: string }> = ({ flag }) => {
           <Info size={10} /> {open ? 'hide' : 'explain'}
         </span>
       </button>
-      {open && (
-        <div className="px-3 pb-3 pt-1 border-t border-danger-bd/60 text-[12px] text-ink-1 leading-relaxed bg-surface flex flex-col gap-2">
-          <div>
-            <p className="text-[10px] font-data uppercase tracking-label text-ink-3 m-0 mb-0.5">{explanation.title}</p>
-            <p className="m-0">{explanation.detail}</p>
-          </div>
-          <div className="border-l-2 border-accent pl-3">
-            <p className="text-[10px] font-data uppercase tracking-label text-ink-3 m-0 mb-0.5">Reviewer guidance</p>
-            <p className="m-0 text-ink-2">{explanation.suggestion}</p>
+      <div className={['disclosure-content', open ? 'open' : ''].join(' ')}>
+        <div>
+          <div className="px-3 pb-3 pt-1 border-t border-danger-bd/60 text-[12px] text-ink-1 leading-relaxed bg-surface flex flex-col gap-2">
+            <div>
+              <p className="text-[10px] font-data uppercase tracking-label text-ink-3 m-0 mb-0.5">{explanation.title}</p>
+              <p className="m-0">{explanation.detail}</p>
+            </div>
+            <div className="border-l-2 border-accent pl-3">
+              <p className="text-[10px] font-data uppercase tracking-label text-ink-3 m-0 mb-0.5">Reviewer guidance</p>
+              <p className="m-0 text-ink-2">{explanation.suggestion}</p>
+            </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

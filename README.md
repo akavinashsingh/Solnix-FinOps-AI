@@ -133,10 +133,22 @@ src/
 
 All typography, colour, spacing, shadow, and radius tokens are defined in [`src/index.css`](src/index.css) under `:root {}` and exposed to Tailwind via `@theme`. The full system is documented in [`docs/agents/design.md`](docs/agents/design.md). Highlights:
 
-- **Fonts:** Instrument Serif (display / large numbers), DM Sans (UI body), DM Mono (data, IDs, amounts).
-- **Palette:** warm canvas `#FAFAF8`, ink scale `#1A1916 → #B8B5AC`, deep navy accent `#1B3A6B`, semantic green/amber/red bordered badges, OneMoney AA teal `#0F766E`.
+- **Theme:** dark mode is the default; light mode opts in via the `.light` class on `<html>`. A toggle in the top header (Sun/Moon icon) flips it and persists the choice to `localStorage` (`solnix-theme`).
+- **Fonts:** Outfit (display headings, large numbers), Plus Jakarta Sans (UI body), DM Mono (data — IDs, amounts, timestamps). Instrument Serif is still loaded for italic accents.
+- **Palette (dark, default):** near-black canvas `#050508`, ink scale `#FFFFFF → #3C3E4F`, indigo accent `#6366F1`, neon OneMoney AA teal `#00F5D4`, semantic emerald / amber / red with low-alpha backgrounds and 25% borders.
+- **Palette (light, opt-in):** warm canvas `#FAFAF8`, ink scale `#1A1916 → #B8B5AC`, deep navy accent `#1B3A6B`, deep AA teal `#0F766E`, bordered semantic badges.
 - **Spacing:** 4 / 8 / 12 / 16 / 20 / 24 / 32 / 40 / 48 / 64 px scale only.
 - **Radii:** 4 / 6 / 10 / 14 — no pill shapes on primary actions.
+- **Effects:** dark mode uses `backdrop-filter: blur(16px)` glass panels and glow-shadow accents (`.shadow-glow-success`, `.shadow-glow-accent`); light mode flattens both for readability.
+- **A11y:** WCAG-compliant focus rings (`outline + offset + transparency ring`), `prefers-reduced-motion` honoured, ARIA roles on nav (`role="tablist"`, `aria-selected`, `aria-expanded`).
+
+## Responsive layout
+
+The sidebar collapses to a hamburger-triggered overlay below the `lg` breakpoint. On mobile:
+- The brand wordmark hides the FIU TSP badge.
+- The Cmd+K hint and env badge tuck away on small screens.
+- The sidebar slides in over a backdrop-blurred content area (220 ms ease-out) and dismisses on backdrop click.
+- The `PageHeader` stacks title above actions on small screens, flowing horizontally from `sm` up.
 
 ---
 
